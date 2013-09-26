@@ -33,7 +33,13 @@ function mktmpdir() {
   echo $dir
 }
 
-
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
 
 function run_npm() {
   command="$1"
@@ -103,6 +109,7 @@ function cat_npm_debug_log() {
   fi
 }
 
+
 PERL_VERSION="5.16.2"
 PERL_PACKAGE="perloku.s3.amazonaws.com/perl-$PERL_VERSION.tgz"
 
@@ -133,7 +140,6 @@ if [ -f $BUILD_DIR/Makefile.PL ]; then
 
   echo "Dependencies installed" | indent
 fi
-
 
 trap cat_npm_debug_log EXIT
 
