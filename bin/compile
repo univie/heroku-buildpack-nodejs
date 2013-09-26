@@ -129,7 +129,7 @@ if [ -f $BUILD_DIR/Makefile.PL ]; then
   echo "-----> Installing dependencies"
   VENDOR_DEPS="$BUILD_DIR/vendor/perl-deps"
   CACHE_DEPS="$CACHE_DIR/$PERL_VERSION/perl-deps"
-  $CPANM_UPGRADE="perl -S $(which cpanm)"
+  CPANM_UPGRADE="perl -S $(which cpanm)"
   CPANM="perl -S $(which cpanm) -l $CACHE_DEPS"
   
   $CPANM_UPGRADE --self-upgrade
