@@ -18,37 +18,6 @@ S3_BUCKET="heroku-buildpack-nodejs"
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-PERL_VERSION="5.16.2"
-PERL_PACKAGE="perloku.s3.amazonaws.com/perl-$PERL_VERSION.tgz"
-
-VENDORED_PERL="$BUILD_DIR/vendor/perl"
-
-echo "-----> Vendoring Perl"
-
-mkdir -p $VENDORED_PERL  && curl $PERL_PACKAGE -s -o -  | tar xzf - -C $VENDORED_PERL
-
-# Set up so we can use Perl right away
-export PATH="$VENDORED_PERL/bin:$PATH"
-export PERL5LIB="$VENDORED_PERL/lib/$PERL_VERSION:$VENDORED_PERL/lib/site_perl/$PERL_VERSION"
-
-echo "Using Perl $PERL_VERSION" | indent
-
-if [ -f $BUILD_DIR/Makefile.PL ]; then
-  echo "-----> Installing dependencies"
-  VENDOR_DEPS="$BUILD_DIR/vendor/perl-deps"
-  CACHE_DEPS="$CACHE_DIR/$PERL_VERSION/perl-deps"
-  # CPANM="perl -S $(which cpanm) -l $CACHE_DEPS"
-  CPANM="curl -L cpanmin.us | perl -l $CACHE_DEPS"
-  mkdir -p "$CACHE_DIR"
-  # $CPANM --self-upgrade
-  # $CPANM -v
-  $CPANM --notest --installdeps "$BUILD_DIR" 2>&1 | indent
-
-  cp -R "$CACHE_DEPS" "$VENDOR_DEPS"
-
-  echo "Dependencies installed" | indent
-fi
-
 
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
@@ -64,13 +33,7 @@ function mktmpdir() {
   echo $dir
 }
 
-function indent() {
-  c='s/^/       /'
-  case $(uname) in
-    Darwin) sed -l "$c";;
-    *)      sed -u "$c";;
-  esac
-}
+
 
 function run_npm() {
   command="$1"
@@ -139,6 +102,38 @@ function cat_npm_debug_log() {
     cat $BUILD_DIR/npm-debug.log
   fi
 }
+
+PERL_VERSION="5.16.2"
+PERL_PACKAGE="perloku.s3.amazonaws.com/perl-$PERL_VERSION.tgz"
+
+VENDORED_PERL="$BUILD_DIR/vendor/perl"
+
+echo "-----> Vendoring Perl"
+
+mkdir -p $VENDORED_PERL  && curl $PERL_PACKAGE -s -o -  | tar xzf - -C $VENDORED_PERL
+
+# Set up so we can use Perl right away
+export PATH="$VENDORED_PERL/bin:$PATH"
+export PERL5LIB="$VENDORED_PERL/lib/$PERL_VERSION:$VENDORED_PERL/lib/site_perl/$PERL_VERSION"
+
+echo "Using Perl $PERL_VERSION" | indent
+
+if [ -f $BUILD_DIR/Makefile.PL ]; then
+  echo "-----> Installing dependencies"
+  VENDOR_DEPS="$BUILD_DIR/vendor/perl-deps"
+  CACHE_DEPS="$CACHE_DIR/$PERL_VERSION/perl-deps"
+  # CPANM="perl -S $(which cpanm) -l $CACHE_DEPS"
+  CPANM="curl -L cpanmin.us | perl -l $CACHE_DEPS"
+  mkdir -p "$CACHE_DIR"
+  # $CPANM --self-upgrade
+  # $CPANM -v
+  $CPANM --notest --installdeps "$BUILD_DIR" 2>&1 | indent
+
+  cp -R "$CACHE_DEPS" "$VENDOR_DEPS"
+
+  echo "Dependencies installed" | indent
+fi
+
 
 trap cat_npm_debug_log EXIT
 
