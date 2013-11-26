@@ -120,6 +120,8 @@ VENDORED_HUNALIGN="$BUILD_DIR/vendor/hunalign"
 echo "-----> Vendoring hunalign"
 
 mkdir -p $VENDORED_HUNALIGN  && curl $HUNALIGN_PACKAGE -s -o -  | tar xzf - -C $VENDORED_HUNALIGN
+cd "${VENDORED_HUNALIGN}/hunalign-1.1/src/hunalign"
+make
 
 # Set up so we can use Perl right away
 # export PATH="$VENDORED_PERL/bin:$PATH"
