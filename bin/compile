@@ -121,7 +121,7 @@ VENDORED_HUNALIGN="$BUILD_DIR/vendor/hunalign"
 
 echo "-----> Vendoring hunalign"
 
-mkdir -p $VENDORED_HUNALIGN  && curl $HUNALIGN_PACKAGE -s -o -  | tar xzf - -C $VENDORED_HUNALIGN
+mkdir -p $VENDORED_HUNALIGN  && curl $HUNALIGN_PACKAGE -s -o -  | tar xvf - -C $VENDORED_HUNALIGN
 cd "${VENDORED_HUNALIGN}/hunalign-1.1/src/hunalign"
 make
 
