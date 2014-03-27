@@ -113,16 +113,15 @@ set -x
 # PERL_VERSION="5.16.2"
 # PERL_PACKAGE="perloku.s3.amazonaws.com/perl-$PERL_VERSION.tgz"
 
-HUNALIGN_PACKAGE="https://github.com/univie/heroku-buildpack-nodejs/releases/download/1.0/hunalign-1.1.tar.gz"
-# HUNALIGN_PACKAGE="ftp://ftp.mokk.bme.hu/Hunglish/src/hunalign/latest/hunalign-1.1.tgz"
+# HUNALIGN_PACKAGE="https://github.com/univie/heroku-buildpack-nodejs/releases/download/1.0/hunalign-1.1.tar.gz"
+HUNALIGN_PACKAGE="ftp://ftp.mokk.bme.hu/Hunglish/src/hunalign/latest/hunalign-1.1.tgz"
 
 # VENDORED_PERL="$BUILD_DIR/vendor/perl"
 VENDORED_HUNALIGN="$BUILD_DIR/vendor/hunalign"
 
 echo "-----> Vendoring hunalign"
 
-mkdir -p $VENDORED_HUNALIGN  && curl $HUNALIGN_PACKAGE -s -o -  | file
-#tar xvf - -C $VENDORED_HUNALIGN
+mkdir -p $VENDORED_HUNALIGN  && curl $HUNALIGN_PACKAGE -s -o -  | tar xzf - -C $VENDORED_HUNALIGN
 cd "${VENDORED_HUNALIGN}/hunalign-1.1/src/hunalign"
 make
 
